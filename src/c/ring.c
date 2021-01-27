@@ -3,6 +3,13 @@ byte write/read.
 
 01/26/2021 JAC
 
+I realize this code looks clunky.  It was devised to avoid
+using a modulus function to calculate the ring wrap condition
+testing.
+
+The goal is to put the Ring_Write function into an ISR routine
+and so, excution time must be reduced 
+
 FIFO mode
 write with head pointer
 read with tail pointer
@@ -78,7 +85,7 @@ struct ring *t;
 }
 void Ring_Reset(struct ring *r)
 {
-	r->head = r->tail = 0;
+	r->head = r->tail = r->count = 0;
 	memset(r->buffer,0,r->size);	
 }
 void Ring_Delete(struct ring *r)
