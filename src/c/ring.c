@@ -81,6 +81,7 @@ struct ring *t;
 	t = calloc(1,sizeof(struct ring));
 	t->buffer = calloc(1,sz);
 	t->size = sz;
+	Ring_Reset(t);
 	return t;
 }
 void Ring_Reset(struct ring *r)
