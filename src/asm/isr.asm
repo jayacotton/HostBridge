@@ -1,9 +1,15 @@
 	GLOBAL	_wb
 	GLOBAL	_r
 	GLOBAL	_c
+	GLOBAL	_link
 ; void wb()
 	SECTION	code_compiler
 ._wb	equ	$
+;
+; get a byte from the pio port and save it in _c
+;
+	in	a,(pioa)
+	ld	(_c),a
 ;       r->buffer[r->head] = c;
 	ld      hl,(_r)	; get the r pointer
 	ld      e,(hl)	; get buffer
@@ -70,14 +76,6 @@ i_2	equ	$
 	inc     hl
 	inc     (hl)	; head ++
 ; NOTE: there is a bug here.  At this time, ring can only be 255 bytes.
-;
-;	ld      a,(hl)
-;	inc     hl
-;	jr      nz,ASMPC+3
-;	inc     (hl)
-;	ld      h,(hl)
-;	ld      l,a
-;	dec     hl
 i_3	equ	$
 ;       r->count++;
 	ld      hl,(_r)
@@ -85,20 +83,17 @@ i_3	equ	$
 	add     hl,bc
 	inc     (hl)
 ; NOTE:  there is a bug here.  At this time, count can't exceed 255
-;
-;	ld      a,(hl)
-;	inc     hl
-;	jr      nz,ASMPC+3
-;	inc     (hl)
-;	ld      h,(hl)
-;	ld      l,a
-;	dec     hl
 ;}
-;	pop	hl	; extra stuff on stack ?
-	ret
+;
+; chain in to the next isr on this link
+;
+	xor	a	; wtf ?
+	ld	hl,(_link)
+	jp	(hl)
 	SECTION	bss_compiler
 ._r     equ 	$
 	defs    2
 ._c     equ	$
 	defs    1
-
+._link	equ	$
+	defs	2
