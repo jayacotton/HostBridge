@@ -7,27 +7,29 @@ struct ring * cbuf;
 
 extern void msg_write(unsigned char *);
 extern void msg_read (unsigned char *);
-
+extern int wb;
+extern int link;
+extern struct ring * r;
+extern char c;
 void main()
 {
 unsigned char i,j;
 unsigned char buff[32];
 
 	cbuf = Ring_Init(32);
+	r = cbuf; // salt the ring pointer for ISR
+	SetInt(wb,4);	
+	SetPIO();
+	if(r == 0){
+		printf("Error at Ring_Init\n");
+		return;
+	}
 	i = 0;
-	while(1){
-		msg_write("this is a test");
+	for(i=0;i<255;i++){
 		msg_read(buff);
 		printf("%s\n",buff);
 	}		
-}
-void msg_write(unsigned char *t)
-{
-	while(*t){
-		Ring_Write(cbuf,*t);
-		t++;
-	}
-	Ring_Write(cbuf,'\0');
+	ClearInt();
 }
 void msg_read(unsigned char *bu)
 {
