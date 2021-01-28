@@ -1,6 +1,7 @@
-CFLAGS = --list --c-code-in-asm -Wall -clib=new
+CFLAGS = --list --c-code-in-asm -Wall -clib=new -m
 
 all: test
 
-test: test.c circular.c HBridge.c
-	zcc +cpm -create-app $(CFLAGS) -otest test.c ring.c 
+test: test.c ring.c HBridge.c
+	zcc +cpm -create-app $(CFLAGS) -otest test.c ring.c ../asm/isr.o 
+
